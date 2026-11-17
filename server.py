@@ -151,7 +151,7 @@ if __name__ == '__main__':
     os.chdir(BASE_DIR)
     SONGS_DIR.mkdir(exist_ok=True)
     
-    with socketserver.TCPServer(("", PORT), MusicHandler) as httpd:
+    with socketserver.TCPServer(("127.0.0.1", PORT), MusicHandler) as httpd:
         print(f"Server running at http://localhost:{PORT}")
         print(f"Songs directory: {SONGS_DIR}")
         print("Press Ctrl+C to stop")
