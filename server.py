@@ -10,7 +10,7 @@ import json
 import urllib.parse
 from pathlib import Path
 
-PORT = 8081
+PORT = 1225
 BASE_DIR = Path(__file__).parent
 SONGS_DIR = BASE_DIR / "songs"
 AUDIO_EXTS = {'.mp3', '.wav', '.ogg', '.m4a', '.flac', '.aac'}
