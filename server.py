@@ -23,7 +23,12 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         
-        # API endpoint for directory listing
+        # API endpoint for flat song list (for backward compatibility)
+        if path == '/api/songs':
+            self.send_songs_json()
+            return
+        
+        # API endpoint for directory listing with folder navigation
         if path.startswith('/api/browse'):
             self.send_browse_json(parsed)
             return
@@ -35,6 +40,32 @@ class MusicHandler(http.server.SimpleHTTPRequestHandler):
         
         # Default file serving
         super().do_GET()
+    
+    def send_songs_json(self):
+        """Return flat JSON list of all songs for backward compatibility."""
+        songs = []
+        
+        def scan_dir(dir_path, rel_prefix=''):
+            for entry in sorted(dir_path.iterdir(), key=lambda e: (not e.is_dir(), e.name.lower())):
+                if entry.is_dir():
+                    scan_dir(entry, f"{rel_prefix}{entry.name}/")
+                elif entry.suffix.lower() in AUDIO_EXTS:
+                    parsed_name = self.parse_filename(entry.name)
+                    rel_path = f"{rel_prefix}{entry.name}"
+                    songs.append({
+                        'path': rel_path,
+                        'url': f'/songs/{urllib.parse.quote(rel_path)}',
+                        'title': parsed_name['title'],
+                        'artist': parsed_name['artist']
+                    })
+        
+        scan_dir(SONGS_DIR)
+        
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps(songs).encode())
     
     def send_browse_json(self, parsed):
         """Return JSON listing of files and folders at given path."""
