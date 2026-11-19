@@ -6,6 +6,7 @@
     <meta name="theme-color" content="#fff8f3" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#201b13" media="(prefers-color-scheme: dark)">
     <title>why is buster so rude?</title>
+    <meta name="description" content="Music player with GitHub Pages, YouTube Music, Deezer, SoundCloud & Last.fm playlist import">
     <style>
         :root {
             --font-sans: "Heebo", "App CJK Fallback", system-ui, "Noto Color Emoji", sans-serif;
@@ -399,6 +400,14 @@
             <div class="persistent-footer grid gap-2" style="grid-template-columns: 1fr;">
                 <div id="mini-player" class="pointer-events-auto mx-auto w-full max-w-225 justify-between overflow-hidden rounded-2xl border border-primary/10 bg-secondaryContainer text-onSecondaryContainer contain-content">
                     <div class="flex size-full flex-col items-center justify-between gap-4 px-4 pt-2 pb-4">
+                        <!-- Track Info -->
+                        <div class="flex w-full items-center gap-4" style="min-height: 40px;">
+                            <div id="trackInfo" class="flex-1 min-w-0" style="display: none;">
+                                <div class="text-body-md text-nowrap overflow-hidden text-ellipsis" id="miniTitle"></div>
+                                <div class="text-body-sm text-nowrap overflow-hidden text-ellipsis" id="miniArtist" style="opacity: 0.7;"></div>
+                            </div>
+                        </div>
+
                         <!-- Timeline -->
                         <div class="timeline-container grid w-full items-center gap-2.5 text-nowrap tabular-nums">
                             <div class="text-body-sm" id="currentTime">0:00</div>
@@ -471,6 +480,82 @@
                 </div>
             </div>
         </div>
+
+        <!-- Import Source Modal (First Visit) -->
+        <div id="importModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+            <div class="modal" style="max-width: 480px;">
+                <div style="text-align: center; margin-bottom: calc(var(--spacing) * 6);">
+                    <svg role="presentation" width="64" height="64" viewBox="0 0 24 24" class="mx-auto mb-4" style="color: var(--color-primary);"><use href="#system-icon-musicNote"></use></svg>
+                    <h2 id="importTitle" style="font-size: calc(var(--spacing) * 5.5); margin-bottom: calc(var(--spacing) * 2); color: var(--color-onSurface);">Welcome to the Music Player</h2>
+                    <p style="color: var(--color-onSurface); opacity: 0.7; font-size: calc(var(--spacing) * 3.5); line-height: 1.5;">How would you like to get started?</p>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: calc(var(--spacing) * 3);">
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="youtube" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: #FF0000; color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136C4.495 20.455 12 20.455 12 20.455s7.505 0 9.376-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12 9.545 15.568z"/></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">YouTube Music</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Import playlists, liked music, or albums</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="deezer" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: #FF6B35; color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-12.5c0 .83-.67 1.5-1.5 1.5H9v-3h4.5v-1.5H9V7.5h5c.83 0 1.5.67 1.5 1.5v3z"/></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">Deezer</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Import playlists, favorites, flow</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="soundcloud" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: #FF5500; color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.52 16.34c-.24.36-.66.48-1.02.24-2.3-1.64-4.78-3.28-6.5-4.78-.27-.6-.06-1.29.42-1.56.21-.12.48-.06.72.12 1.84 2.22 5.12 3.96 8.36 2.94.25-.09.45.06.57.3.12.18-.03.42-.27.48z"/></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">SoundCloud</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Import playlists, likes, reposts</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="lastfm" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: #D51007; color: white;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">Last.fm</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Import loved tracks, top artists</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+<button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="github" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: var(--color-primary); color: var(--color-onPrimary);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-folder"></use></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">Use GitHub Repo</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Load songs from rrumeerd-sirk/music (default)</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="local" style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); transition: border-color 0.2s, background 0.2s;">
+                        <div class="size-12 shrink-0 flex items-center justify-center rounded-lg" style="background: var(--color-secondary); color: var(--color-onSecondary);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-folderOpen"></use></svg>
+                        </div>
+                        <div class="flex-1 text-left">
+                            <div class="text-label-lg" style="color: var(--color-onSurface);">Local Folder</div>
+                            <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">Select a music folder on your computer</div>
+                        </div>
+                        <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                    </button>
+                    <button class="import-option-btn interactable flex items-center gap-4 p-4 rounded-xl" data-source="skip" style="background: transparent; border: 1px solid var(--color-outlineVariant); color: var(--color-onSurface); opacity: 0.7;">
+                        <div class="flex-1 text-center text-body-md">Skip for now</div>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <style>
@@ -487,7 +572,8 @@
                     return JSON.parse(saved);
                 } catch (e) {}
             }
-            return { owner: '', repo: '', branch: 'main' };
+            // Default to rrumeerd-sirk/music
+            return { owner: 'rrumeerd-sirk', repo: 'music', branch: 'main' };
         }
 
         function saveConfig(config) {
@@ -499,143 +585,1659 @@
         let GITHUB_REPO = CONFIG.repo;
         let GITHUB_BRANCH = CONFIG.branch || 'main';
 
-        // ==================== STATE ====================
-        const audio = new Audio();
-        let allSongs = [];
-        let currentQueue = [];
-        let currentQueueIndex = -1;
-        let currentIndex = -1;
-        let isShuffle = false;
-        let repeatMode = 0;
-        let currentBrowsePath = '';
-        let fileTree = [];
+        // ==================== YOUTUBE MUSIC ====================
+const YT_CLIENT_ID = '999980887706-id49i5t83fql9vosb8kes7139eru6605.apps.googleusercontent.com'; // YouTube Data API v3 Client ID
+const YT_CLIENT_SECRET = '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'; // YouTube Data API v3 Client Secret
+const YT_REDIRECT_URI = window.location.origin + window.location.pathname;
+const YT_SCOPES = 'https://www.googleapis.com/auth/youtube.readonly';
+const YT_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
+const YT_TOKEN_URL = 'https://oauth2.googleapis.com/token';
+const YT_API_BASE = 'https://www.googleapis.com/youtube/v3';
 
-        // ==================== DOM ELEMENTS ====================
-        const elements = {
-            trackList: document.getElementById('trackList'),
-            emptyState: document.getElementById('emptyState'),
-            loadingState: document.getElementById('loadingState'),
-            breadcrumb: document.getElementById('breadcrumb'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            miniTitle: document.getElementById('miniTitle'),
-            miniArtist: document.getElementById('miniArtist'),
-            playPauseBtn: document.getElementById('playPauseBtn'),
-            playIcon: document.getElementById('playIcon'),
-            prevBtn: document.getElementById('prevBtn'),
-            nextBtn: document.getElementById('nextBtn'),
-            shuffleBtn: document.getElementById('shuffleBtn'),
-            shuffleActive: document.getElementById('shuffleActive'),
-            repeatBtn: document.getElementById('repeatBtn'),
-            repeatActive: document.getElementById('repeatActive'),
-            progressSlider: document.getElementById('progressSlider'),
-            progressFilled: document.getElementById('progressFilled'),
-            currentTime: document.getElementById('currentTime'),
-            totalTime: document.getElementById('totalTime'),
-            volumeSlider: document.getElementById('volumeSlider'),
-            volumeFilled: document.getElementById('volumeFilled'),
-            volumeIcon: document.getElementById('volumeIcon'),
-            volumeBtn: document.getElementById('volumeBtn'),
-            trackLink: document.getElementById('trackLink'),
-            trackInfo: document.getElementById('trackInfo'),
-            configBtn: document.getElementById('configBtn'),
-            configModal: document.getElementById('configModal'),
-            configOwner: document.getElementById('configOwner'),
-            configRepo: document.getElementById('configRepo'),
-            configBranch: document.getElementById('configBranch'),
-            configSave: document.getElementById('configSave'),
-            configCancel: document.getElementById('configCancel'),
-        };
+// ==================== INVIDIOUS/PIPED (YouTube Audio Proxy) ====================
+// Free public instances for getting audio streams
+// Updated with more reliable instances
+const INVIDIOUS_INSTANCES = [
+    'https://yewtu.be',
+    'https://invidious.kavin.rocks',
+    'https://invidious.vern.cc',
+    'https://invidious.projectsegfau.lt',
+    'https://y.com.cm',
+    'https://invidious.tiekoetter.com',
+    'https://invidious.esmailelbob.org',
+    'https://invidious.namazso.eu',
+];
+const PIPED_INSTANCES = [
+    'https://piped-api.kavin.rocks',
+    'https://piped.mha.fi',
+    'https://piped.nasflux.net',
+];
 
-        // ==================== UTILITIES ====================
-        function formatTime(seconds) {
-            if (!seconds || isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
-        }
+let workingInvidiousInstance = '';
+let workingPipedInstance = '';
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+// ==================== DEEZER ====================
+const DEEZER_CLIENT_ID = ''; // Add your Deezer App ID
+const DEEZER_REDIRECT_URI = window.location.origin + window.location.pathname;
+const DEEZER_SCOPES = 'basic_access,email,offline_access,manage_library,listening_history';
+const DEEZER_AUTH_URL = 'https://connect.deezer.com/oauth/auth.php';
+const DEEZER_TOKEN_URL = 'https://connect.deezer.com/oauth/access_token.php';
+const DEEZER_API_BASE = 'https://api.deezer.com';
 
-        function parseTitle(filename) {
-            const name = filename.replace(/\.[^/.]+$/, '');
-            const parts = name.split(' - ');
-            if (parts.length >= 2) {
-                return { artist: parts[0].trim(), title: parts.slice(1).join(' - ').trim() };
-            }
-            return { artist: 'Unknown Artist', title: name };
-        }
+// PKCE storage keys for Deezer
+const DEEZER_PKCE_VERIFIER_KEY = 'deezer_pkce_verifier';
+const DEEZER_STATE_KEY = 'deezer_oauth_state';
 
-        function updateVolumeIcon() {
-            const vol = audio.muted ? 0 : audio.volume;
-            if (vol === 0) {
-                elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeOff"></use>';
-            } else if (vol < 0.5) {
-                elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeMid"></use>';
-            } else {
-                elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeHigh"></use>';
-            }
-        }
+// ==================== SOUNDCLOUD ====================
+const SC_CLIENT_ID = ''; // Add your SoundCloud Client ID
+const SC_REDIRECT_URI = window.location.origin + window.location.pathname;
+const SC_SCOPES = 'non-expiring';
+const SC_AUTH_URL = 'https://secure.soundcloud.com/connect';
+const SC_TOKEN_URL = 'https://api.soundcloud.com/oauth2/token';
+const SC_API_BASE = 'https://api.soundcloud.com';
 
-        function updateProgressUI(percent) {
-            const pct = Math.max(0, Math.min(100, percent * 100));
-            elements.progressFilled.style.width = pct + '%';
-            elements.progressSlider.value = percent * 1000;
-        }
+// PKCE storage keys for SoundCloud
+const SC_PKCE_VERIFIER_KEY = 'soundcloud_pkce_verifier';
+const SC_STATE_KEY = 'soundcloud_oauth_state';
 
-        function updateVolumeUI(vol) {
-            const pct = Math.max(0, Math.min(100, vol * 100));
-            elements.volumeFilled.style.width = pct + '%';
-            elements.volumeSlider.value = vol * 100;
-        }
+// ==================== LAST.FM ====================
+const LASTFM_API_KEY = ''; // Add your Last.fm API Key
+const LASTFM_API_SECRET = ''; // Add your Last.fm API Secret
+const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/';
+const LASTFM_AUTH_URL = 'https://www.last.fm/api/auth/';
 
-        function closeConfigModal() {
-            elements.configModal.classList.add('hidden');
-        }
+// PKCE storage keys for Last.fm
+const LASTFM_STATE_KEY = 'lastfm_oauth_state';
+const LASTFM_TOKEN_KEY = 'lastfm_session_key';
 
-        // ==================== CONFIG MODAL ====================
-        elements.configBtn.addEventListener('click', () => {
-            elements.configOwner.value = GITHUB_OWNER;
-            elements.configRepo.value = GITHUB_REPO;
-            elements.configBranch.value = GITHUB_BRANCH;
-            elements.configModal.classList.remove('hidden');
+// ==================== PKCE UTILITIES ====================
+// ==================== STATE ====================
+const audio = new Audio();
+audio.crossOrigin = 'anonymous';
+let allSongs = [];
+let currentQueue = [];
+let currentQueueIndex = -1;
+let currentIndex = -1;
+let isShuffle = false;
+let repeatMode = 0;
+let currentBrowsePath = '';
+let fileTree = [];
+
+
+function generateCodeVerifier() {
+    const array = new Uint8Array(32);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+}
+
+async function generateCodeChallenge(verifier) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(verifier);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+}
+
+
+// ==================== DOM ELEMENTS ====================
+const elements = {
+    trackList: document.getElementById('trackList'),
+    emptyState: document.getElementById('emptyState'),
+    loadingState: document.getElementById('loadingState'),
+    breadcrumb: document.getElementById('breadcrumb'),
+    refreshBtn: document.getElementById('refreshBtn'),
+    miniTitle: document.getElementById('miniTitle'),
+    miniArtist: document.getElementById('miniArtist'),
+    playPauseBtn: document.getElementById('playPauseBtn'),
+    playIcon: document.getElementById('playIcon'),
+    prevBtn: document.getElementById('prevBtn'),
+    nextBtn: document.getElementById('nextBtn'),
+    shuffleBtn: document.getElementById('shuffleBtn'),
+    shuffleActive: document.getElementById('shuffleActive'),
+    repeatBtn: document.getElementById('repeatBtn'),
+    repeatActive: document.getElementById('repeatActive'),
+    progressSlider: document.getElementById('progressSlider'),
+    progressFilled: document.getElementById('progressFilled'),
+    currentTime: document.getElementById('currentTime'),
+    totalTime: document.getElementById('totalTime'),
+    volumeSlider: document.getElementById('volumeSlider'),
+    volumeFilled: document.getElementById('volumeFilled'),
+    volumeIcon: document.getElementById('volumeIcon'),
+    volumeBtn: document.getElementById('volumeBtn'),
+    trackLink: document.getElementById('trackLink'),
+    trackInfo: document.getElementById('trackInfo'),
+    configBtn: document.getElementById('configBtn'),
+    configModal: document.getElementById('configModal'),
+    configOwner: document.getElementById('configOwner'),
+    configRepo: document.getElementById('configRepo'),
+    configBranch: document.getElementById('configBranch'),
+    configSave: document.getElementById('configSave'),
+    configCancel: document.getElementById('configCancel'),
+};
+
+// Import modal elements
+const importElements = {
+    importModal: document.getElementById('importModal'),
+    importBtns: document.querySelectorAll('.import-option-btn'),
+
+};
+
+// ==================== UTILITIES ====================
+function formatTime(seconds) {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function parseTitle(filename) {
+    const name = filename.replace(/\.[^/.]+$/, '');
+    const parts = name.split(' - ');
+    if (parts.length >= 2) {
+        return { artist: parts[0].trim(), title: parts.slice(1).join(' - ').trim() };
+    }
+    return { artist: 'Unknown Artist', title: name };
+}
+
+function updateVolumeIcon() {
+    const vol = audio.muted ? 0 : audio.volume;
+    if (vol === 0) {
+        elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeOff"></use>';
+    } else if (vol < 0.5) {
+        elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeMid"></use>';
+    } else {
+        elements.volumeIcon.innerHTML = '<use href="#system-icon-volumeHigh"></use>';
+    }
+}
+
+function updateProgressUI(percent) {
+    const pct = Math.max(0, Math.min(100, percent * 100));
+    elements.progressFilled.style.width = pct + '%';
+    elements.progressSlider.value = percent * 1000;
+}
+
+function updateVolumeUI(vol) {
+    const pct = Math.max(0, Math.min(100, vol * 100));
+    elements.volumeFilled.style.width = pct + '%';
+    elements.volumeSlider.value = vol * 100;
+}
+
+function closeConfigModal() {
+    elements.configModal.classList.add('hidden');
+}
+
+function closeImportModal() {
+    importElements.importModal.classList.add('hidden');
+}
+
+function generateState() {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return btoa(String.fromCharCode(...array))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+}
+
+// ==================== IMPORT HANDLERS ====================
+function handleImportChoice(source) {
+    closeImportModal();
+    
+    if (source === 'youtube') {
+        startYouTubeOAuth();
+    } else if (source === 'deezer') {
+        startDeezerOAuth();
+    } else if (source === 'soundcloud') {
+        startSoundCloudOAuth();
+    } else if (source === 'lastfm') {
+        startLastFmOAuth();
+    } else if (source === 'github') {
+        loadSongs();
+    } else if (source === 'local') {
+        loadFromLocalFolder();
+    } else if (source === 'file') {
+        uploadPlaylistFile();
+    } else if (source === 'skip') {
+        elements.loadingState.classList.add('hidden');
+        elements.emptyState.classList.remove('hidden');
+        elements.emptyState.querySelector('p').innerHTML = 'Configure your GitHub repo to load songs from <code>songs/</code> folder.<br>Click the <button class="interactable flex size-10 items-center justify-center rounded-full" style="margin-left: 4px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-settings"></use></svg></button> button.';
+    }
+}
+
+// ==================== YOUTUBE MUSIC ====================
+async function startYouTubeOAuth() {
+    if (!YT_CLIENT_ID) {
+        showServiceSetupModal('YouTube Music', 'YouTube Data API v3', 'https://console.cloud.google.com/apis/credentials');
+        return;
+    }
+    
+    const verifier = generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
+    const state = generateState();
+    
+    sessionStorage.setItem('yt_pkce_verifier', verifier);
+    sessionStorage.setItem('yt_oauth_state', state);
+    
+    const params = new URLSearchParams({
+        client_id: YT_CLIENT_ID,
+        response_type: 'code',
+        redirect_uri: YT_REDIRECT_URI,
+        scope: YT_SCOPES,
+        code_challenge_method: 'S256',
+        code_challenge: challenge,
+        state: state,
+        access_type: 'offline',
+        prompt: 'consent'
+    });
+    
+    const authUrl = `${YT_AUTH_URL}?${params.toString()}`;
+    console.log('Redirecting to YouTube:', authUrl);
+    window.location.href = authUrl;
+}
+
+async function handleYouTubeCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    if (error) {
+        console.error('YouTube auth error:', error);
+        showServiceError('YouTube', error);
+        return false;
+    }
+    
+    if (!code || !state) return false;
+    
+    const storedState = sessionStorage.getItem('yt_oauth_state');
+    if (state !== storedState) {
+        showServiceError('YouTube', 'Invalid state parameter');
+        return false;
+    }
+    
+    const verifier = sessionStorage.getItem('yt_pkce_verifier');
+    if (!verifier) {
+        showServiceError('YouTube', 'Missing code verifier');
+        return false;
+    }
+    
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = 'Exchanging code for token...';
+    
+    try {
+        const tokenResponse = await fetch(YT_TOKEN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: YT_REDIRECT_URI,
+                client_id: YT_CLIENT_ID,
+                client_secret: YT_CLIENT_SECRET,
+                code_verifier: verifier,
+            }),
         });
+        
+        if (!tokenResponse.ok) {
+            const errorData = await tokenResponse.json();
+            throw new Error(errorData.error_description || 'Token exchange failed');
+        }
+        
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
+        const refreshToken = tokenData.refresh_token;
+        
+        sessionStorage.setItem('yt_access_token', accessToken);
+        if (refreshToken) sessionStorage.setItem('yt_refresh_token', refreshToken);
+        
+        sessionStorage.removeItem('yt_pkce_verifier');
+        sessionStorage.removeItem('yt_oauth_state');
+        
+        elements.loadingState.querySelector('p').textContent = 'Fetching playlists...';
+        await fetchAndShowYouTubePlaylists(accessToken);
+        
+    } catch (e) {
+        console.error('YouTube token exchange error:', e);
+        showServiceError('YouTube', e.message);
+    }
+    
+    return true;
+}
 
-        elements.configCancel.addEventListener('click', closeConfigModal);
-
-        elements.configSave.addEventListener('click', () => {
-            const owner = elements.configOwner.value.trim();
-            const repo = elements.configRepo.value.trim();
-            const branch = elements.configBranch.value.trim() || 'main';
+async function fetchAndShowYouTubePlaylists(accessToken) {
+    try {
+        const playlists = [];
+        let url = `${YT_API_BASE}/playlists?part=snippet,contentDetails&mine=true&maxResults=50`;
+        
+        while (url) {
+            const response = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
             
-            if (!owner || !repo) {
-                alert('Please enter both owner and repository name');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Token expired - for YouTube we'd need refresh token
+                    throw new Error('Token expired, please re-authenticate');
+                }
+                throw new Error(`Failed to fetch playlists: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            playlists.push(...data.items);
+            url = data.nextPageToken ? `${YT_API_BASE}/playlists?part=snippet,contentDetails&mine=true&maxResults=50&pageToken=${data.nextPageToken}` : null;
+        }
+        
+        showPlaylistSelectionModal(playlists, accessToken, 'youtube');
+        
+    } catch (e) {
+        console.error('Fetch YouTube playlists error:', e);
+        showServiceError('YouTube', e.message);
+    }
+}
+
+// ==================== INVIDIOUS/PIPED HELPERS ====================
+async function findWorkingInvidiousInstance() {
+    if (workingInvidiousInstance) return workingInvidiousInstance;
+    
+    for (const instance of INVIDIOUS_INSTANCES) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
+            // Try /api/v1/instance first, then /api/v1/videos/test as fallback
+            let response = await fetch(`${instance}/api/v1/instance`, { 
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
+            
+            if (!response.ok) {
+                // Try alternative endpoint
+                const controller2 = new AbortController();
+                const timeout2 = setTimeout(() => controller2.abort(), 5000);
+                response = await fetch(`${instance}/api/v1/videos/dQw4w9WgXcQ?fields=adaptiveFormats`, { 
+                    signal: controller2.signal
+                });
+                clearTimeout(timeout2);
+            }
+            
+            if (response.ok) {
+                workingInvidiousInstance = instance;
+                console.log('Working Invidious instance:', instance);
+                return instance;
+            }
+        } catch (e) {
+            console.log('Invidious instance failed:', instance, e.message);
+        }
+    }
+    return null;
+}
+
+async function findWorkingPipedInstance() {
+    if (workingPipedInstance) return workingPipedInstance;
+    
+    for (const instance of PIPED_INSTANCES) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 5000);
+            const response = await fetch(`${instance}/api/v1/health`, { 
+                signal: controller.signal 
+            });
+            clearTimeout(timeout);
+            if (response.ok) {
+                workingPipedInstance = instance;
+                console.log('Working Piped instance:', instance);
+                return instance;
+            }
+        } catch (e) {
+            console.log('Piped instance failed:', instance, e.message);
+        }
+    }
+    return null;
+}
+
+async function getYouTubeAudioUrl(videoId) {
+    // Try Invidious first
+    const invidious = await findWorkingInvidiousInstance();
+    if (invidious) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 10000);
+            const response = await fetch(`${invidious}/api/v1/videos/${videoId}?fields=adaptiveFormats`, {
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            clearTimeout(timeout);
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    // Find audio-only format with highest quality
+                    const audioFormats = data.adaptiveFormats?.filter(f => f.mimeType?.startsWith('audio/')) || [];
+                    if (audioFormats.length > 0) {
+                        audioFormats.sort((a, b) => (b.bitrate || 0) - (a.bitrate || 0));
+                        console.log('Got audio from Invidious:', invidious, 'bitrate:', audioFormats[0].bitrate);
+                        return audioFormats[0].url;
+                    }
+                } else {
+                    console.log('Invidious returned non-JSON:', contentType);
+                }
+            }
+        } catch (e) {
+            console.log('Invidious audio fetch failed:', e.message);
+        }
+    }
+    
+    // Try Piped
+    const piped = await findWorkingPipedInstance();
+    if (piped) {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 10000);
+            const response = await fetch(`${piped}/streams/${videoId}`, {
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            clearTimeout(timeout);
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    // Piped returns audioStreams array
+                    const audioStreams = data.audioStreams || [];
+                    if (audioStreams.length > 0) {
+                        audioStreams.sort((a, b) => (b.quality || 0) - (a.quality || 0));
+                        console.log('Got audio from Piped:', piped, 'quality:', audioStreams[0].quality);
+                        return audioStreams[0].url;
+                    }
+                } else {
+                    console.log('Piped returned non-JSON:', contentType);
+                }
+            }
+        } catch (e) {
+            console.log('Piped audio fetch failed:', e.message);
+        }
+    }
+    
+    // Fallback: direct YouTube link (won't play in <audio> but opens in YouTube)
+    console.log('No playable audio found for:', videoId);
+    return `https://www.youtube.com/watch?v=${videoId}`;
+}
+
+async function importYouTubePlaylist(playlist, accessToken) {
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = `Loading "${playlist.snippet.title}"...`;
+    
+    try {
+        let tracks = [];
+        let url = `${YT_API_BASE}/playlistItems?part=snippet,contentDetails&playlistId=${playlist.id}&maxResults=50`;
+        
+        while (url) {
+            const response = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            
+            if (!response.ok) break;
+            
+            const data = await response.json();
+            tracks.push(...data.items);
+            url = data.nextPageToken ? `${YT_API_BASE}/playlistItems?part=snippet,contentDetails&playlistId=${playlist.id}&maxResults=50&pageToken=${data.nextPageToken}` : null;
+        }
+        
+        if (tracks.length === 0) {
+            throw new Error('No tracks found in this playlist');
+        }
+        
+        // Convert YouTube tracks to our song format with playable audio URLs
+        elements.loadingState.querySelector('p').textContent = `Fetching audio streams for ${tracks.length} tracks...`;
+        
+        const songs = [];
+        for (let i = 0; i < tracks.length; i++) {
+            const item = tracks[i];
+            const snippet = item.snippet;
+            const videoId = snippet.resourceId?.videoId || item.contentDetails?.videoId;
+            
+            if (!videoId) continue;
+            
+            // Update progress
+            if (i % 5 === 0) {
+                elements.loadingState.querySelector('p').textContent = `Fetching audio streams... (${i + 1}/${tracks.length})`;
+            }
+            
+            // Get playable audio URL from Invidious/Piped
+            const audioUrl = await getYouTubeAudioUrl(videoId);
+            const isPlayable = audioUrl && !audioUrl.includes('youtube.com/watch');
+            
+            songs.push({
+                path: `youtube:${videoId}`,
+                name: snippet.title,
+                url: audioUrl,
+                title: snippet.title,
+                artist: snippet.videoOwnerChannelTitle || 'Unknown Artist',
+                youtubeId: videoId,
+                youtubeUrl: `https://www.youtube.com/watch?v=${videoId}`,
+                thumbnail: snippet.thumbnails?.high?.url || snippet.thumbnails?.default?.url,
+                _playable: isPlayable
+            });
+        }
+        
+        if (songs.length === 0) {
+            throw new Error('No valid tracks found');
+        }
+        
+        allSongs = songs;
+        fileTree = buildFolderStructure(allSongs);
+        renderBrowseView('');
+        elements.loadingState.classList.add('hidden');
+        
+        const playableCount = songs.filter(s => s._playable).length;
+        if (playableCount > 0) {
+            showServiceError('YouTube', `Playlist imported! ${playableCount}/${songs.length} tracks are playable via Invidious/Piped.`);
+        } else {
+            showServiceError('YouTube', `Playlist imported! Note: Could not find playable audio streams. Tracks will open in YouTube.`);
+        }
+        
+        // Hide import modal since import succeeded
+        importElements.importModal.classList.add('hidden');
+        
+    } catch (e) {
+        console.error('Import YouTube playlist error:', e);
+        showServiceError('YouTube', e.message);
+    }
+}
+
+// ==================== DEEZER ====================
+async function startDeezerOAuth() {
+    if (!DEEZER_CLIENT_ID) {
+        showServiceSetupModal('Deezer', 'Deezer Developers', 'https://developers.deezer.com/myapps');
+        return;
+    }
+    
+    const verifier = generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
+    const state = generateState();
+    
+    sessionStorage.setItem(DEEZER_PKCE_VERIFIER_KEY, verifier);
+    sessionStorage.setItem(DEEZER_STATE_KEY, state);
+    
+    const params = new URLSearchParams({
+        app_id: DEEZER_CLIENT_ID,
+        redirect_uri: DEEZER_REDIRECT_URI,
+        perms: DEEZER_SCOPES,
+        code_challenge_method: 'S256',
+        code_challenge: challenge,
+        state: state,
+        response_type: 'code'
+    });
+    
+    const authUrl = `${DEEZER_AUTH_URL}?${params.toString()}`;
+    console.log('Redirecting to Deezer:', authUrl);
+    window.location.href = authUrl;
+}
+
+async function handleDeezerCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    if (error) {
+        console.error('Deezer auth error:', error);
+        showServiceError('Deezer', error);
+        return false;
+    }
+    
+    if (!code || !state) return false;
+    
+    const storedState = sessionStorage.getItem(DEEZER_STATE_KEY);
+    if (state !== storedState) {
+        showServiceError('Deezer', 'Invalid state parameter');
+        return false;
+    }
+    
+    const verifier = sessionStorage.getItem(DEEZER_PKCE_VERIFIER_KEY);
+    if (!verifier) {
+        showServiceError('Deezer', 'Missing code verifier');
+        return false;
+    }
+    
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = 'Exchanging code for token...';
+    
+    try {
+        const tokenResponse = await fetch(DEEZER_TOKEN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: DEEZER_REDIRECT_URI,
+                client_id: DEEZER_CLIENT_ID,
+                code_verifier: verifier,
+            }),
+        });
+        
+        if (!tokenResponse.ok) {
+            const errorData = await tokenResponse.json();
+            throw new Error(errorData.error_description || 'Token exchange failed');
+        }
+        
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
+        const refreshToken = tokenData.refresh_token;
+        const expiresIn = tokenData.expires_in;
+        
+        sessionStorage.setItem('deezer_access_token', accessToken);
+        if (refreshToken) sessionStorage.setItem('deezer_refresh_token', refreshToken);
+        sessionStorage.setItem('deezer_token_expires', Date.now() + expiresIn * 1000);
+        
+        sessionStorage.removeItem(DEEZER_PKCE_VERIFIER_KEY);
+        sessionStorage.removeItem(DEEZER_STATE_KEY);
+        
+        elements.loadingState.querySelector('p').textContent = 'Fetching playlists...';
+        await fetchAndShowDeezerPlaylists(accessToken);
+        
+    } catch (e) {
+        console.error('Deezer token exchange error:', e);
+        showServiceError('Deezer', e.message);
+    }
+    
+    return true;
+}
+
+async function fetchAndShowDeezerPlaylists(accessToken) {
+    try {
+        // Get user profile first
+        const userResponse = await fetch(`${DEEZER_API_BASE}/user/me`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (!userResponse.ok) throw new Error('Failed to get user profile');
+        const user = await userResponse.json();
+        
+        // Get playlists
+        const playlistsResponse = await fetch(`${DEEZER_API_BASE}/user/${user.id}/playlists?limit=100`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (!playlistsResponse.ok) throw new Error('Failed to fetch playlists');
+        const playlistsData = await playlistsResponse.json();
+        const playlists = playlistsData.data || [];
+        
+        // Also get favorites
+        const favoritesResponse = await fetch(`${DEEZER_API_BASE}/user/${user.id}/tracks?limit=1000`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (favoritesResponse.ok) {
+            const favoritesData = await favoritesResponse.json();
+            if (favoritesData.data && favoritesData.data.length > 0) {
+                playlists.unshift({
+                    id: 'favorites',
+                    title: '❤️ Favorite Tracks',
+                    nb_tracks: favoritesData.data.length,
+                    picture: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FF6B35" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+                    _tracks: favoritesData.data
+                });
+            }
+        }
+        
+        showPlaylistSelectionModal(playlists, accessToken, 'deezer');
+        
+    } catch (e) {
+        console.error('Fetch Deezer playlists error:', e);
+        showServiceError('Deezer', e.message);
+    }
+}
+
+async function importDeezerPlaylist(playlist, accessToken) {
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = `Loading "${playlist.title}"...`;
+    
+    try {
+        let tracks = [];
+        
+        if (playlist.id === 'favorites') {
+            tracks = playlist._tracks;
+        } else {
+            // Fetch playlist tracks
+            const response = await fetch(`${DEEZER_API_BASE}/playlist/${playlist.id}/tracks?limit=1000`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch playlist tracks');
+            const data = await response.json();
+            tracks = data.data || [];
+        }
+        
+        if (tracks.length === 0) {
+            throw new Error('No tracks found in this playlist');
+        }
+        
+        // Convert Deezer tracks to our song format
+        // Deezer provides 30-second previews - for full tracks need Deezer Premium + specific setup
+        const songs = tracks.map(track => ({
+            path: `deezer:${track.id}`,
+            name: `${track.artist.name} - ${track.title}`,
+            url: track.preview || '', // 30-second preview
+            title: track.title,
+            artist: track.artist.name,
+            deezerId: track.id,
+            duration: track.duration,
+            album: track.album?.title,
+            albumArt: track.album?.cover_medium,
+            preview: track.preview,
+            link: track.link
+        })).filter(s => s.url); // Only tracks with preview
+        
+        if (songs.length === 0) {
+            throw new Error('No playable previews found (Deezer provides 30s previews only)');
+        }
+        
+        allSongs = songs;
+        fileTree = buildFolderStructure(allSongs);
+        renderBrowseView('');
+        elements.loadingState.classList.add('hidden');
+        
+    } catch (e) {
+        console.error('Import Deezer playlist error:', e);
+        showServiceError('Deezer', e.message);
+    }
+}
+
+// ==================== SOUNDCLOUD ====================
+async function startSoundCloudOAuth() {
+    if (!SC_CLIENT_ID) {
+        showServiceSetupModal('SoundCloud', 'SoundCloud Developers', 'https://soundcloud.com/you/apps');
+        return;
+    }
+    
+    const verifier = generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
+    const state = generateState();
+    
+    sessionStorage.setItem(SC_PKCE_VERIFIER_KEY, verifier);
+    sessionStorage.setItem(SC_STATE_KEY, state);
+    
+    const params = new URLSearchParams({
+        client_id: SC_CLIENT_ID,
+        redirect_uri: SC_REDIRECT_URI,
+        response_type: 'code',
+        scope: SC_SCOPES,
+        code_challenge_method: 'S256',
+        code_challenge: challenge,
+        state: state,
+        display: 'popup'
+    });
+    
+    const authUrl = `${SC_AUTH_URL}?${params.toString()}`;
+    console.log('Redirecting to SoundCloud:', authUrl);
+    window.location.href = authUrl;
+}
+
+async function handleSoundCloudCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    if (error) {
+        console.error('SoundCloud auth error:', error);
+        showServiceError('SoundCloud', error);
+        return false;
+    }
+    
+    if (!code || !state) return false;
+    
+    const storedState = sessionStorage.getItem(SC_STATE_KEY);
+    if (state !== storedState) {
+        showServiceError('SoundCloud', 'Invalid state parameter');
+        return false;
+    }
+    
+    const verifier = sessionStorage.getItem(SC_PKCE_VERIFIER_KEY);
+    if (!verifier) {
+        showServiceError('SoundCloud', 'Missing code verifier');
+        return false;
+    }
+    
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = 'Exchanging code for token...';
+    
+    try {
+        const tokenResponse = await fetch(SC_TOKEN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: SC_REDIRECT_URI,
+                client_id: SC_CLIENT_ID,
+                client_secret: '', // SoundCloud uses client_secret for server-side
+                code_verifier: verifier,
+            }),
+        });
+        
+        if (!tokenResponse.ok) {
+            const errorData = await tokenResponse.json();
+            throw new Error(errorData.error_description || 'Token exchange failed');
+        }
+        
+        const tokenData = await tokenResponse.json();
+        const accessToken = tokenData.access_token;
+        
+        sessionStorage.setItem('sc_access_token', accessToken);
+        if (tokenData.refresh_token) sessionStorage.setItem('sc_refresh_token', tokenData.refresh_token);
+        
+        sessionStorage.removeItem(SC_PKCE_VERIFIER_KEY);
+        sessionStorage.removeItem(SC_STATE_KEY);
+        
+        elements.loadingState.querySelector('p').textContent = 'Fetching playlists...';
+        await fetchAndShowSoundCloudPlaylists(accessToken);
+        
+    } catch (e) {
+        console.error('SoundCloud token exchange error:', e);
+        showServiceError('SoundCloud', e.message);
+    }
+    
+    return true;
+}
+
+async function fetchAndShowSoundCloudPlaylists(accessToken) {
+    try {
+        // Get user profile
+        const userResponse = await fetch(`${SC_API_BASE}/me.json`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (!userResponse.ok) throw new Error('Failed to get user profile');
+        const user = await userResponse.json();
+        
+        // Get playlists
+        const playlistsResponse = await fetch(`${SC_API_BASE}/me/playlists.json?limit=50`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (!playlistsResponse.ok) throw new Error('Failed to fetch playlists');
+        const playlists = await playlistsResponse.json();
+        
+        // Also get favorites/likes
+        const favoritesResponse = await fetch(`${SC_API_BASE}/me/favorites.json?limit=200`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        
+        if (favoritesResponse.ok) {
+            const favorites = await favoritesResponse.json();
+            if (favorites.length > 0) {
+                playlists.unshift({
+                    id: 'favorites',
+                    title: '❤️ Liked Tracks',
+                    track_count: favorites.length,
+                    artwork_url: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23FF5500" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+                    _tracks: favorites
+                });
+            }
+        }
+        
+        showPlaylistSelectionModal(playlists, accessToken, 'soundcloud');
+        
+    } catch (e) {
+        console.error('Fetch SoundCloud playlists error:', e);
+        showServiceError('SoundCloud', e.message);
+    }
+}
+
+async function importSoundCloudPlaylist(playlist, accessToken) {
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = `Loading "${playlist.title}"...`;
+    
+    try {
+        let tracks = [];
+        
+        if (playlist.id === 'favorites') {
+            tracks = playlist._tracks;
+        } else {
+            const response = await fetch(`${SC_API_BASE}/playlists/${playlist.id}.json`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch playlist');
+            const data = await response.json();
+            tracks = data.tracks || [];
+        }
+        
+        if (tracks.length === 0) {
+            throw new Error('No tracks found in this playlist');
+        }
+        
+        // Convert SoundCloud tracks to our song format
+        // SoundCloud provides streamable URLs for some tracks
+        const songs = tracks.map(track => {
+            const streamUrl = track.streamable ? `${track.stream_url}?client_id=${SC_CLIENT_ID}` : '';
+            const previewUrl = track.preview_url;
+            
+            return {
+                path: `soundcloud:${track.id}`,
+                name: `${track.user?.username || 'Unknown'} - ${track.title}`,
+                url: streamUrl || previewUrl || '',
+                title: track.title,
+                artist: track.user?.username || 'Unknown Artist',
+                scId: track.id,
+                duration: track.duration,
+                artwork: track.artwork_url,
+                streamable: track.streamable,
+                permalink: track.permalink_url,
+                _streamUrl: streamUrl
+            };
+        }).filter(s => s.url);
+        
+        if (songs.length === 0) {
+            throw new Error('No streamable tracks found in this playlist');
+        }
+        
+        allSongs = songs;
+        fileTree = buildFolderStructure(allSongs);
+        renderBrowseView('');
+        elements.loadingState.classList.add('hidden');
+        
+    } catch (e) {
+        console.error('Import SoundCloud playlist error:', e);
+        showServiceError('SoundCloud', e.message);
+    }
+}
+
+// ==================== LAST.FM ====================
+async function startLastFmOAuth() {
+    if (!LASTFM_API_KEY) {
+        showServiceSetupModal('Last.fm', 'Last.fm API', 'https://www.last.fm/api/account/create');
+        return;
+    }
+    
+    const state = generateState();
+    sessionStorage.setItem(LASTFM_STATE_KEY, state);
+    
+    const params = new URLSearchParams({
+        api_key: LASTFM_API_KEY,
+        cb: window.location.origin + window.location.pathname + '?lastfm_callback=1',
+        state: state
+    });
+    
+    const authUrl = `${LASTFM_AUTH_URL}?${params.toString()}`;
+    console.log('Redirecting to Last.fm:', authUrl);
+    window.location.href = authUrl;
+}
+
+async function handleLastFmCallback() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    if (error) {
+        console.error('Last.fm auth error:', error);
+        showServiceError('Last.fm', error);
+        return false;
+    }
+    
+    if (!token || !state) return false;
+    
+    const storedState = sessionStorage.getItem(LASTFM_STATE_KEY);
+    if (state !== storedState) {
+        showServiceError('Last.fm', 'Invalid state parameter');
+        return false;
+    }
+    
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = 'Getting session key...';
+    
+    try {
+        // Get session key
+        const params = new URLSearchParams({
+            method: 'auth.getSession',
+            api_key: LASTFM_API_KEY,
+            token: token,
+            format: 'json'
+        });
+        
+        // Need to sign the request
+        const signature = await generateLastFmSignature({
+            method: 'auth.getSession',
+            api_key: LASTFM_API_KEY,
+            token: token
+        });
+        
+        params.append('api_sig', signature);
+        
+        const response = await fetch(`${LASTFM_API_BASE}?${params.toString()}`, {
+            method: 'POST'
+        });
+        
+        if (!response.ok) throw new Error('Failed to get session');
+        
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.message);
+        
+        const sessionKey = data.session.key;
+        sessionStorage.setItem(LASTFM_TOKEN_KEY, sessionKey);
+        sessionStorage.removeItem(LASTFM_STATE_KEY);
+        
+        elements.loadingState.querySelector('p').textContent = 'Fetching loved tracks...';
+        await fetchAndShowLastFmData(sessionKey);
+        
+    } catch (e) {
+        console.error('Last.fm auth error:', e);
+        showServiceError('Last.fm', e.message);
+    }
+    
+    return true;
+}
+
+async function generateLastFmSignature(params) {
+    // Sort params alphabetically
+    const sortedKeys = Object.keys(params).sort();
+    let sigString = '';
+    for (const key of sortedKeys) {
+        sigString += key + params[key];
+    }
+    sigString += LASTFM_API_SECRET;
+    
+    const encoder = new TextEncoder();
+    const data = encoder.encode(sigString);
+    const hash = await crypto.subtle.digest('MD5', data);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function fetchAndShowLastFmData(sessionKey) {
+    try {
+        // Get user info
+        const userParams = new URLSearchParams({
+            method: 'user.getInfo',
+            api_key: LASTFM_API_KEY,
+            user: data.session.name,
+            format: 'json'
+        });
+        
+        // Get loved tracks
+        const lovedParams = new URLSearchParams({
+            method: 'user.getLovedTracks',
+            api_key: LASTFM_API_KEY,
+            user: data.session.name,
+            limit: 200,
+            format: 'json'
+        });
+        
+        const [userRes, lovedRes] = await Promise.all([
+            fetch(`${LASTFM_API_BASE}?${userParams.toString()}`),
+            fetch(`${LASTFM_API_BASE}?${lovedParams.toString()}`)
+        ]);
+        
+        const userData = await userRes.json();
+        const lovedData = await lovedRes.json();
+        
+        const playlists = [];
+        
+        if (lovedData.lovedtracks && lovedData.lovedtracks.track.length > 0) {
+            playlists.push({
+                id: 'loved',
+                title: '❤️ Loved Tracks',
+                track_count: lovedData.lovedtracks['@attr'].total,
+                _tracks: lovedData.lovedtracks.track
+            });
+        }
+        
+        // Get top tracks
+        const topParams = new URLSearchParams({
+            method: 'user.getTopTracks',
+            api_key: LASTFM_API_KEY,
+            user: data.session.name,
+            limit: 200,
+            format: 'json'
+        });
+        
+        const topRes = await fetch(`${LASTFM_API_BASE}?${topParams.toString()}`);
+        const topData = await topRes.json();
+        
+        if (topData.toptracks && topData.toptracks.track.length > 0) {
+            playlists.push({
+                id: 'top',
+                title: '📈 Top Tracks',
+                track_count: topData.toptracks['@attr'].total,
+                _tracks: topData.toptracks.track
+            });
+        }
+        
+        showPlaylistSelectionModal(playlists, sessionKey, 'lastfm');
+        
+    } catch (e) {
+        console.error('Fetch Last.fm data error:', e);
+        showServiceError('Last.fm', e.message);
+    }
+}
+
+async function importLastFmPlaylist(playlist, sessionKey) {
+    elements.loadingState.classList.remove('hidden');
+    elements.trackList.classList.add('hidden');
+    elements.emptyState.classList.add('hidden');
+    elements.loadingState.querySelector('p').textContent = `Loading "${playlist.title}"...`;
+    
+    try {
+        const tracks = playlist._tracks || [];
+        
+        if (tracks.length === 0) {
+            throw new Error('No tracks found');
+        }
+        
+        // Last.fm doesn't provide audio URLs - need to search elsewhere
+        // We'll create entries that can be matched with local files or other services
+        const songs = tracks.map(track => ({
+            path: `lastfm:${track.name}-${track.artist.name}`,
+            name: `${track.artist.name} - ${track.name}`,
+            url: '', // Last.fm doesn't provide audio
+            title: track.name,
+            artist: track.artist.name,
+            lastfmUrl: track.url,
+            playcount: track.playcount,
+            _requiresMatch: true
+        }));
+        
+        if (songs.length === 0) {
+            throw new Error('No valid tracks');
+        }
+        
+        allSongs = songs;
+        fileTree = buildFolderStructure(allSongs);
+        renderBrowseView('');
+        elements.loadingState.classList.add('hidden');
+        
+        showServiceError('Last.fm', 'Last.fm tracks imported! Note: Last.fm only provides metadata. You\'ll need to match these with local files or use another service for audio.');
+        
+    } catch (e) {
+        console.error('Import Last.fm playlist error:', e);
+        showServiceError('Last.fm', e.message);
+    }
+}
+
+// ==================== JSON/CSV UPLOAD ====================
+function uploadPlaylistFile() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.csv';
+    input.style.display = 'none';
+    input.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        try {
+            const text = await file.text();
+            let songs = [];
+            
+            if (file.name.endsWith('.json')) {
+                const data = JSON.parse(text);
+                songs = parseJsonPlaylist(data);
+            } else if (file.name.endsWith('.csv')) {
+                songs = parseCsvPlaylist(text);
+            }
+            
+            if (songs.length === 0) {
+                throw new Error('No valid tracks found in file');
+            }
+            
+            allSongs = songs;
+            fileTree = buildFolderStructure(allSongs);
+            renderBrowseView('');
+            elements.loadingState.classList.add('hidden');
+            
+        } catch (err) {
+            console.error('File upload error:', err);
+            showServiceError('File Upload', err.message);
+        }
+    });
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+}
+
+function parseJsonPlaylist(data) {
+    // Handle various JSON formats
+    let tracks = [];
+    
+    if (Array.isArray(data)) {
+        tracks = data;
+    } else if (data.tracks && Array.isArray(data.tracks)) {
+        tracks = data.tracks;
+    } else if (data.items && Array.isArray(data.items)) {
+        tracks = data.items.map(item => item.track || item);
+    } else if (data.playlists && Array.isArray(data.playlists)) {
+        // Multiple playlists - use first one
+        tracks = data.playlists[0].tracks || data.playlists[0].items || [];
+    }
+    
+    return tracks.map((track, index) => {
+        const title = track.title || track.name || track.song || `Track ${index + 1}`;
+        const artist = track.artist || track.artistName || track.artists?.[0]?.name || 'Unknown Artist';
+        const url = track.url || track.preview_url || track.stream_url || track.audio_url || track.link || '';
+        const path = track.path || track.id || `upload:${index}`;
+        
+        return {
+            path,
+            name: `${artist} - ${title}`,
+            url,
+            title,
+            artist,
+            album: track.album || track.albumName,
+            duration: track.duration || track.duration_ms,
+            artwork: track.artwork_url || track.albumArt || track.album_art
+        };
+    }).filter(s => s.url); // Only tracks with URLs
+}
+
+function parseCsvPlaylist(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/"/g, ''));
+    const titleIdx = headers.findIndex(h => h.includes('title') || h === 'name' || h === 'song');
+    const artistIdx = headers.findIndex(h => h.includes('artist'));
+    const urlIdx = headers.findIndex(h => h.includes('url') || h.includes('link') || h.includes('preview'));
+    const albumIdx = headers.findIndex(h => h.includes('album'));
+    const durationIdx = headers.findIndex(h => h.includes('duration'));
+    
+    if (titleIdx === -1 || artistIdx === -1) return [];
+    
+    return lines.slice(1).map((line, index) => {
+        const cols = line.split(',').map(c => c.trim().replace(/"/g, ''));
+        const title = cols[titleIdx] || `Track ${index + 1}`;
+        const artist = cols[artistIdx] || 'Unknown Artist';
+        const url = urlIdx >= 0 ? cols[urlIdx] : '';
+        const path = `upload:${index}`;
+        
+        return {
+            path,
+            name: `${artist} - ${title}`,
+            url,
+            title,
+            artist,
+            album: albumIdx >= 0 ? cols[albumIdx] : '',
+            duration: durationIdx >= 0 ? cols[durationIdx] : ''
+        };
+    }).filter(s => s.url);
+}
+
+// ==================== UNIFIED PLAYLIST MODAL ====================
+function showPlaylistSelectionModal(playlists, token, service) {
+    elements.loadingState.classList.add('hidden');
+    
+    const serviceNames = {
+        youtube: 'YouTube Music',
+        deezer: 'Deezer',
+        soundcloud: 'SoundCloud',
+        lastfm: 'Last.fm'
+    };
+    
+    const serviceName = serviceNames[service] || service;
+    const importFunctions = {
+        youtube: importYouTubePlaylist,
+        deezer: importDeezerPlaylist,
+        soundcloud: importSoundCloudPlaylist,
+        lastfm: importLastFmPlaylist
+    };
+    
+    const importFn = importFunctions[service];
+    
+    const modalHtml = `
+        <div class="modal-overlay" id="playlistModal" style="z-index: 300;">
+            <div class="modal" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: calc(var(--spacing) * 4);">
+                    <h2 style="font-size: calc(var(--spacing) * 5); color: var(--color-primary);">Select ${serviceName} Playlist</h2>
+                    <button class="interactable size-10 rounded-full" onclick="document.getElementById('playlistModal').remove(); loadSongs();" aria-label="Close">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-moreVertical"></use></svg>
+                    </button>
+                </div>
+                <p style="color: var(--color-onSurface); opacity: 0.7; font-size: calc(var(--spacing) * 3.5); margin-bottom: calc(var(--spacing) * 4);">
+                    Found ${playlists.length} playlists. Choose one to import:
+                </p>
+                <div style="display: flex; flex-direction: column; gap: calc(var(--spacing) * 2); max-height: 50vh; overflow-y: auto;">
+                    ${playlists.map(pl => `
+                        <button class="playlist-btn interactable flex items-center gap-4 p-4 rounded-xl" 
+                            data-id="${pl.id || pl.snippet?.title || pl.title || pl.name}" 
+                            data-name="${(pl.snippet?.title || pl.title || pl.name).replace(/"/g, '"')}"
+                            data-service="${service}"
+                            style="background: var(--color-surface); border: 1px solid var(--color-outlineVariant); text-align: left; transition: border-color 0.2s;">
+                            <div class="size-14 shrink-0 flex items-center justify-center rounded-lg" style="background: var(--color-primary); color: var(--color-onPrimary);">
+                                ${(pl.picture || pl.artwork_url || pl.images?.[0]?.url || pl.snippet?.thumbnails?.default?.url) 
+                                    ? `<img src="${pl.picture || pl.artwork_url || pl.images?.[0]?.url || pl.snippet?.thumbnails?.default?.url}" alt="" class="size-14 rounded-lg" style="object-fit: cover;">`
+                                    : `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-playlist"></use></svg>`
+                                }
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-label-lg" style="color: var(--color-onSurface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${pl.snippet?.title || pl.title || pl.name}</div>
+                                <div class="text-body-sm" style="color: var(--color-onSurface); opacity: 0.6;">${pl.contentDetails?.itemCount || pl.nb_tracks || pl.track_count || pl.tracks?.total || pl._tracks?.length || 0} tracks</div>
+                            </div>
+                            <svg class="size-6 shrink-0" style="color: var(--color-onSurface); opacity: 0.3;" viewBox="0 0 24 24"><use href="#system-icon-chevronRight"></use></svg>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.querySelectorAll('.playlist-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const playlistId = btn.dataset.id;
+            const service = btn.dataset.service;
+            
+            const playlist = playlists.find(p => (p.id || p.snippet?.title || p.title || p.name) === playlistId);
+            if (playlist) {
+                document.getElementById('playlistModal').remove();
+                const importFunctions = {
+                    youtube: importYouTubePlaylist,
+                    deezer: importDeezerPlaylist,
+                    soundcloud: importSoundCloudPlaylist,
+                    lastfm: importLastFmPlaylist
+                };
+                importFunctions[service](playlist, token);
+            }
+        });
+        
+        btn.addEventListener('mouseenter', () => {
+            btn.style.borderColor = 'var(--color-primary)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.borderColor = 'var(--color-outlineVariant)';
+        });
+    });
+    
+    document.getElementById('playlistModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('playlistModal')) {
+            document.getElementById('playlistModal').remove();
+            loadSongs();
+        }
+    });
+}
+
+// ==================== HELPER FUNCTIONS ====================
+function showServiceSetupModal(service, platform, url) {
+    const modalHtml = `
+        <div class="modal-overlay" id="setupModal" style="z-index: 300;">
+            <div class="modal" style="max-width: 500px;">
+                <h2 style="font-size: calc(var(--spacing) * 5); margin-bottom: calc(var(--spacing) * 4); color: var(--color-primary);">${service} Setup Required</h2>
+                <p style="color: var(--color-onSurface); opacity: 0.8; font-size: calc(var(--spacing) * 3.5); line-height: 1.6; margin-bottom: calc(var(--spacing) * 4);">
+                    To use ${service} import, you need to create an app on ${platform} and add your Client ID to the code.
+                </p>
+                <ol style="color: var(--color-onSurface); opacity: 0.7; font-size: calc(var(--spacing) * 3.5); line-height: 1.8; margin-bottom: calc(var(--spacing) * 4); padding-left: calc(var(--spacing) * 8);">
+                    <li>Go to <a href="${url}" target="_blank" style="color: var(--color-primary);">${platform}</a></li>
+                    <li>Create a new application</li>
+                    <li>Set redirect URI to: <code style="background: var(--color-surface); padding: 2px 6px; border-radius: 4px;">${window.location.origin + window.location.pathname}</code></li>
+                    <li>Copy the Client ID / App ID / API Key</li>
+                    <li>Add it to the <code>${service.toUpperCase()}_CLIENT_ID</code> constant in this file</li>
+                </ol>
+                <div class="btn-row" style="margin-top: calc(var(--spacing) * 6);">
+                    <button class="btn-primary" onclick="document.getElementById('setupModal').remove(); loadSongs();">Use Default Repo Instead</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function showServiceError(service, message) {
+    elements.loadingState.classList.add('hidden');
+    elements.emptyState.classList.remove('hidden');
+    elements.emptyState.querySelector('p').innerHTML = 
+        service + ' Error: ' + message + 
+        '<br><button class="btn-primary" onclick="handleImportChoice(\'" + service.toLowerCase() + "\')" style="margin-top: 8px;">Try Again</button> ' +
+        '<button class="btn-secondary" onclick="loadSongs()" style="margin-top: 8px;">Use Default Repo</button>';
+}
+
+
+// ==================== CALLBACK HANDLING ====================
+async function handlePageCallbacks() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // YouTube callback
+    if (urlParams.get('code') && urlParams.get('state') && !urlParams.get('lastfm_callback')) {
+        const state = urlParams.get('state');
+        const storedYtState = sessionStorage.getItem('yt_oauth_state');
+        const storedDeezerState = sessionStorage.getItem(DEEZER_STATE_KEY);
+        const storedScState = sessionStorage.getItem(SC_STATE_KEY);
+        
+        console.log('Callback detected:', { state, storedYtState, storedDeezerState, storedScState });
+        
+        if (state === storedYtState) {
+            console.log('Matched YouTube state, calling handleYouTubeCallback');
+            await handleYouTubeCallback();
+            return;
+        } else if (state === storedDeezerState) {
+            console.log('Matched Deezer state, calling handleDeezerCallback');
+            await handleDeezerCallback();
+            return;
+        } else if (state === storedScState) {
+            console.log('Matched SoundCloud state, calling handleSoundCloudCallback');
+            await handleSoundCloudCallback();
+            return;
+        }
+        console.log('No matching state found');
+    }
+    
+    // Last.fm callback
+    if (urlParams.get('token') && urlParams.get('state') && urlParams.get('lastfm_callback') === '1') {
+        await handleLastFmCallback();
+        return;
+    }
+    
+    return false;
+}
+
+
+// ==================== LOCAL FOLDER LOADING ====================
+        async function loadFromLocalFolder() {
+            elements.loadingState.classList.remove('hidden');
+            elements.trackList.classList.add('hidden');
+            elements.emptyState.classList.add('hidden');
+            elements.loadingState.querySelector('p').textContent = 'Loading local folder...';
+            
+            let files = [];
+            
+            // Try File System Access API (modern browsers)
+            if ('showDirectoryPicker' in window) {
+                try {
+                    console.log('Opening directory picker...');
+                    const dirHandle = await window.showDirectoryPicker({ mode: 'read' });
+                    console.log('Directory selected:', dirHandle.name);
+                    files = await getAllAudioFiles(dirHandle);
+                } catch (e) {
+                    if (e.name === 'AbortError') {
+                        console.log('User cancelled directory picker');
+                        elements.loadingState.classList.add('hidden');
+                        return;
+                    }
+                    console.error('Directory picker error:', e);
+                    // Don't silently fall back - show error and let user retry
+                    elements.loadingState.classList.add('hidden');
+                    elements.emptyState.classList.remove('hidden');
+                    elements.emptyState.querySelector('p').innerHTML = 
+                        'Could not open folder picker: ' + e.message + 
+                        '<br><button class="btn-primary" onclick="loadFromLocalFolder()" style="margin-top: 8px;">Try Again</button> ' +
+                        '<button class="btn-secondary" onclick="fallbackToFileInput()" style="margin-top: 8px;">Select Files Instead</button>';
+                    return;
+                }
+            } else {
+                console.log('showDirectoryPicker not available, using file input fallback');
+                fallbackToFileInput();
                 return;
             }
             
-            GITHUB_OWNER = owner;
-            GITHUB_REPO = repo;
-            GITHUB_BRANCH = branch;
+            if (files.length === 0) {
+                elements.loadingState.classList.add('hidden');
+                elements.emptyState.classList.remove('hidden');
+                elements.emptyState.querySelector('p').innerHTML = 'No audio files found in selected folder.<br>Supported formats: MP3, WAV, OGG, M4A, FLAC, AAC';
+                return;
+            }
             
-            saveConfig({ owner, repo, branch });
-            closeConfigModal();
-            loadSongs();
+            processLocalFiles(files);
+        }
+        
+        function fallbackToFileInput() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            // Try to enable directory selection via webkitdirectory (Chrome/Edge)
+            input.webkitdirectory = true;
+            input.directory = true;
+            input.accept = 'audio/*,.mp3,.wav,.ogg,.m4a,.flac,.aac';
+            input.style.display = 'none';
+            input.addEventListener('change', async (e) => {
+                const fileList = Array.from(e.target.files);
+                if (fileList.length === 0) {
+                    elements.loadingState.classList.add('hidden');
+                    elements.emptyState.classList.remove('hidden');
+                    return;
+                }
+                // Convert File objects to array with path info
+                // webkitRelativePath will have the relative path when directory is selected
+                const files = fileList.map(f => ({
+                    file: f,
+                    name: f.name,
+                    path: f.webkitRelativePath || f.name,
+                    webkitRelativePath: f.webkitRelativePath || f.name
+                }));
+                processLocalFiles(files);
+            });
+            document.body.appendChild(input);
+            input.click();
+            document.body.removeChild(input);
+        }
+        
+        async function getAllAudioFiles(dirHandle, pathPrefix = '') {
+            const audioExts = ['.mp3', '.wav', '.ogg', '.m4a', '.flac', '.aac'];
+            let files = [];
+            
+            for await (const [name, handle] of dirHandle.entries()) {
+                const fullPath = pathPrefix ? `${pathPrefix}/${name}` : name;
+                if (handle.kind === 'file') {
+                    const ext = name.toLowerCase().substring(name.lastIndexOf('.'));
+                    if (audioExts.includes(ext)) {
+                        const file = await handle.getFile();
+                        files.push({ file, name, path: fullPath, webkitRelativePath: fullPath });
+                    }
+                } else if (handle.kind === 'directory') {
+                    const subFiles = await getAllAudioFiles(handle, fullPath);
+                    files.push(...subFiles);
+                }
+            }
+            return files;
+        }
+        
+        function processLocalFiles(files) {
+            cleanupLocalObjectUrls();
+            elements.loadingState.querySelector('p').textContent = `Processing ${files.length} files...`;
+            
+            const songs = files.map((f, index) => {
+                const parsed = parseTitle(f.name);
+                // Create object URL for playback
+                const url = URL.createObjectURL(f.file);
+                return {
+                    path: f.webkitRelativePath || f.path,
+                    name: f.name,
+                    url: url,
+                    title: parsed.title,
+                    artist: parsed.artist,
+                    _localFile: f.file, // Keep reference to prevent GC
+                    _objectUrl: url // For cleanup
+                };
+            });
+            
+            allSongs = songs;
+            fileTree = buildFolderStructure(allSongs);
+            renderBrowseView('');
+            
+            elements.loadingState.classList.add('hidden');
+        }
+        
+        function showImportInstructions(service, docsUrl, message) {
+            const modalHtml = `
+                <div class="modal-overlay" id="instructionsModal" style="z-index: 300;">
+                    <div class="modal" style="max-width: 500px;">
+                        <h2 style="font-size: calc(var(--spacing) * 5); margin-bottom: calc(var(--spacing) * 4); color: var(--color-primary);">${service} Import</h2>
+                        <p style="color: var(--color-onSurface); opacity: 0.8; font-size: calc(var(--spacing) * 3.5); line-height: 1.6; margin-bottom: calc(var(--spacing) * 4);">${message}</p>
+                        <p style="color: var(--color-onSurface); opacity: 0.6; font-size: calc(var(--spacing) * 3); margin-bottom: calc(var(--spacing) * 4);">This feature requires OAuth setup. For now, you can:</p>
+                        <ul style="color: var(--color-onSurface); opacity: 0.7; font-size: calc(var(--spacing) * 3.5); line-height: 1.8; margin-bottom: calc(var(--spacing) * 4); padding-left: calc(var(--spacing) * 8);">
+                            <li>Export your playlist to JSON/CSV using online tools</li>
+                            <li>Add the songs to your GitHub repo <code>songs/</code> folder</li>
+                            <li>Run <code>generate-manifest.py</code> to update the manifest</li>
+                        </ul>
+                        <a href="${docsUrl}" target="_blank" style="color: var(--color-primary); text-decoration: underline; font-size: calc(var(--spacing) * 3.5);">View ${service} API Docs</a>
+                        <div class="btn-row" style="margin-top: calc(var(--spacing) * 6);">
+                            <button class="btn-primary" onclick="document.getElementById('instructionsModal').remove(); loadSongs();">Use Default Repo Instead</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        importElements.importBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const source = btn.dataset.source;
+                handleImportChoice(source);
+            });
+            
+            btn.addEventListener('mouseenter', () => {
+                btn.style.borderColor = 'var(--color-primary)';
+                btn.style.background = 'color-mix(in oklab, var(--color-primary) 10%, var(--color-surface))';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.borderColor = 'var(--color-outlineVariant)';
+                btn.style.background = 'var(--color-surface)';
+            });
         });
 
-        // Close modal on overlay click
-        elements.configModal.addEventListener('click', (e) => {
-            if (e.target === elements.configModal) {
-                closeConfigModal();
+        importElements.importModal.addEventListener('click', (e) => {
+            if (e.target === importElements.importModal) {
+                closeImportModal();
             }
         });
 
-        // Close modal on Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !elements.configModal.classList.contains('hidden')) {
-                closeConfigModal();
+            if (e.key === 'Escape' && !importElements.importModal.classList.contains('hidden')) {
+                closeImportModal();
             }
         });
 
@@ -853,7 +2455,11 @@
                             </div>
                             <div class="grow min-w-0">
                                 <div class="text-body-md text-nowrap overflow-hidden text-ellipsis item-title">${escapeHtml(item.title)}</div>
-                                <div class="text-body-sm text-nowrap overflow-hidden text-ellipsis" style="color: var(--color-onSurface); opacity: 0.7;">${escapeHtml(item.artist)}</div>
+                                <div class="text-body-sm text-nowrap overflow-hidden text-ellipsis flex items-center gap-2" style="color: var(--color-onSurface); opacity: 0.7;">
+                                    ${escapeHtml(item.artist)}
+                                    ${item._playable === false ? '<span style="color: var(--color-error); font-size: 10px;">⚠ Not playable</span>' : ''}
+                                    ${item._playable === true ? '<span style="color: var(--color-primary); font-size: 10px;">▶ Playable</span>' : ''}
+                                </div>
                             </div>
                         </div>
                     `;
@@ -936,6 +2542,15 @@
             currentQueue = allSongs;
             currentQueueIndex = songIndex;
 
+            const song = allSongs[songIndex];
+            
+            // If track is not playable (YouTube link), open in new tab
+            if (song._playable === false || (url && url.includes('youtube.com/watch'))) {
+                window.open(url, '_blank');
+                showServiceError('YouTube', 'Opening track in YouTube...');
+                return;
+            }
+
             audio.src = url;
             audio.load();
             audio.play().catch(e => console.error('Playback failed:', e));
@@ -991,6 +2606,7 @@
                 const song = currentQueue[currentQueueIndex];
                 elements.miniTitle.textContent = song.title;
                 elements.miniArtist.textContent = song.artist;
+                elements.trackInfo.style.display = 'block';
                 elements.playPauseBtn.disabled = false;
                 elements.prevBtn.disabled = currentQueueIndex === 0 && !isShuffle;
                 elements.nextBtn.disabled = currentQueueIndex === currentQueue.length - 1 && !isShuffle;
@@ -1110,6 +2726,15 @@
         audio.addEventListener('pause', () => { updatePlayButton(); updatePlayingHighlight(); });
         audio.addEventListener('error', (e) => {
             console.error('Audio error:', e);
+            // If the track is not playable, try next one
+            if (currentQueueIndex >= 0 && currentQueue[currentQueueIndex]) {
+                const song = currentQueue[currentQueueIndex];
+                if (song._playable === false || (song.url && song.url.includes('youtube.com/watch'))) {
+                    console.log('Track not playable, skipping to next...');
+                    playNext();
+                    return;
+                }
+            }
             elements.miniTitle.textContent = 'Error loading track';
         });
 
@@ -1133,8 +2758,23 @@
             }
         });
 
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', cleanupLocalObjectUrls);
+
         // ==================== INITIALIZATION ====================
+        // Cleanup object URLs from previous local files
+        function cleanupLocalObjectUrls() {
+            if (allSongs && allSongs.length > 0) {
+                allSongs.forEach(song => {
+                    if (song._objectUrl) {
+                        URL.revokeObjectURL(song._objectUrl);
+                    }
+                });
+            }
+        }
+
         async function loadSongs() {
+            cleanupLocalObjectUrls();
             elements.loadingState.classList.remove('hidden');
             elements.trackList.classList.add('hidden');
             elements.emptyState.classList.add('hidden');
@@ -1165,14 +2805,23 @@
         updateVolumeUI(0.7);
         updateVolumeIcon();
         
-        // Auto-load if configured, otherwise show empty state
-        if (GITHUB_OWNER && GITHUB_REPO) {
-            loadSongs();
-        } else {
-            elements.loadingState.classList.add('hidden');
-            elements.emptyState.classList.remove('hidden');
-            elements.emptyState.querySelector('p').innerHTML = 'Configure your GitHub repo to load songs from <code>songs/</code> folder.<br>Click the <button class="interactable flex size-10 items-center justify-center rounded-full" style="margin-left: 4px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><use href="#system-icon-settings"></use></svg></button> button.';
-        }
+        // Pre-warm Invidious/Piped instances in background
+        (async () => {
+            await Promise.all([
+                findWorkingInvidiousInstance(),
+                findWorkingPipedInstance()
+            ]);
+            console.log('Pre-warmed instances - Invidious:', workingInvidiousInstance, 'Piped:', workingPipedInstance);
+        })();
+        
+        // Handle OAuth callbacks on page load BEFORE showing import modal
+        (async () => {
+            const isCallback = await handlePageCallbacks();
+            if (!isCallback) {
+                // Normal load - show import modal
+                importElements.importModal.classList.remove('hidden');
+            }
+        })();
     </script>
 </body>
 </html>
